@@ -1,0 +1,102 @@
+# flair project file
+Version: 300
+Mode: fluka
+md5: f1935578c601f80a045815894c8703a8
+Input:
+TITLE
+*Set the defaults for precision simulations
+DEFAULTS PRECISIO
+*Define the beam characteristics
+BEAM ISOTOPE
+RADDECAY , 2
+HI-PROPE , 38 90 0.0
+*Define the beam position
+BEAMPOS , 0 0 0
+BEAMPOS CART-VOL 0 10 0 10 0 0.01
+GEOBEGIN COMBNAME
+RPP blk_b -50 50 -50 50 -50 50
+RPP air_b -40 40 -40 40 -0.005 40
+RPP src_b -5 5 -5 5 -0.005 0.005
+RPP al_b -5 5 -5 5 5.00 5.05
+RPP pmma_b -5 5 -5 5 5.05 6.05
+END
+*Black hole
+REGION BLKBODY 5
+	+blk_b -air_b
+*Void around
+REGION VOID 5
+	+air_b -src_b -al_b -pmma_b
+*Void around
+REGION ZRODLO 5
+	+src_b 
+*Void around
+REGION OSLONA 5
+	+al_b
+*Void around
+REGION VOID1 5
+	+pmma_b
+	@select=1
+END
+GEOEND
+*..+....1....+....2....+....3....+....4....+....5....+....6....+....7..
+ASSIGNMA , BLCKHOLE BLKBODY
+ASSIGNMA , VACUUM VOID
+ASSIGNMA , COPPER TARGET
+*Requests simulation of radioactive decays and sets the corresponding
+*biasing and transport conditions
+RADDECAY , 1.
+*Define an irradiation profile for radioactive decay calculations
+IRRPROFI
+*Defines decay times for radioactive product scoring
+DCYTIMES
+*Associates selected scoring detectors with user-defined decay times
+DCYSCORE
+DCYSCORE , -1
+*Set the random number seed
+RANDOMIZ , 1.0
+*Set the number of primary histories to be simulated in the run
+START
+STOP
+EndInput
+
+Page: Input
+
+# Run information
+Run: <default>
+End
+
+# Plots information
+Plot: Red
+	Type: Geometry
+	basisu: 0 0 1
+	basisv: 1 0 0
+	coord: Z-X
+	extends: 0.08164534041559585 0.0918800839434768
+	group: Geometry
+	layer: Media
+	origin: -0.030247 0.0165958 1.36713
+End
+Plot: Green
+	Type: Geometry
+	basisu: 0.816497 0.408248 0.408248
+	basisv: -1.42261e-16 0.707107 -0.707107
+	extends: 0.8735496675330089 0.9858631962158243
+	group: Geometry
+	layer: 3D
+	origin: 0.379933 0.0149375 0.48667
+End
+Plot: Blue
+	Type: Geometry
+	coord: X-Y
+	extends: 13.458798574153814 15.14594141535828
+	group: Geometry
+	layer: Media
+	origin: -0.5496 2.49002 2.63866
+End
+Plot: Magenta
+	Type: Geometry
+	coord: X-Y
+	extends: 100.0 112.85714285714286
+	group: Geometry
+	layer: Media
+End

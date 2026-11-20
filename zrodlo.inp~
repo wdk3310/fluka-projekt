@@ -1,0 +1,44 @@
+TITLE
+
+*Set the defaults for precision simulations
+DEFAULTS                                                              PRECISIO
+*Define the beam characteristics
+BEAM                                                                  ISOTOPE
+RADDECAY           2
+HI-PROPE          38        90       0.0
+*Define the beam position
+BEAMPOS            0         0         0
+BEAMPOS            0        10         0        10         0      0.01CART-VOL
+GEOBEGIN                               5                              COMBNAME
+    0    0          
+RPP <name>     -50 50 -50 50 -50 50
+RPP <name>     -40 40 -40 40 -0.005 40
+RPP <name>     -5 5 -5 5 -0.005 0.005
+RPP <name>     -5 5 -5 5 5.00 5.05
+RPP <name>     -5 5 -5 5 5.05 6.05
+END
+*Black hole
+BLKBODY      5 +blkbody -void
+*Void around
+VOID         5 +void -target
+END
+GEOEND
+*..+....1....+....2....+....3....+....4....+....5....+....6....+....7..
+ASSIGNMA    BLCKHOLE   BLKBODY
+ASSIGNMA      VACUUM      VOID
+ASSIGNMA      COPPER    TARGET
+*Requests simulation of radioactive decays and sets the corresponding
+*biasing and transport conditions
+RADDECAY          1.
+*Define an irradiation profile for radioactive decay calculations
+IRRPROFI
+*Defines decay times for radioactive product scoring
+DCYTIMES
+*Associates selected scoring detectors with user-defined decay times
+DCYSCORE
+DCYSCORE          -1
+*Set the random number seed
+RANDOMIZ         1.0
+*Set the number of primary histories to be simulated in the run
+START
+STOP
