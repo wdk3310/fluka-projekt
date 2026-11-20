@@ -9,18 +9,24 @@ HI-PROPE          38        90       0.0
 *Define the beam position
 BEAMPOS            0         0         0
 BEAMPOS            0        10         0        10         0      0.01CART-VOL
-GEOBEGIN                               5                              COMBNAME
+GEOBEGIN                                                              COMBNAME
     0    0          
-RPP <name>     -50 50 -50 50 -50 50
-RPP <name>     -40 40 -40 40 -0.005 40
-RPP <name>     -5 5 -5 5 -0.005 0.005
-RPP <name>     -5 5 -5 5 5.00 5.05
-RPP <name>     -5 5 -5 5 5.05 6.05
+RPP blk_b      -50 50 -50 50 -50 50
+RPP air_b      -40 40 -40 40 -0.005 40
+RPP src_b      -5 5 -5 5 -0.005 0.005
+RPP al_b       -5 5 -5 5 5.00 5.05
+RPP pmma_b     -5 5 -5 5 5.05 6.05
 END
 *Black hole
-BLKBODY      5 +blkbody -void
+BLKBODY      5 +blk_b -air_b
 *Void around
-VOID         5 +void -target
+VOID         5 +air_b -src_b -al_b -pmma_b
+*Void around
+ZRODLO       5 +src_b
+*Void around
+OSLONA       5 +al_b
+*Void around
+VOID1        5 +pmma_b
 END
 GEOEND
 *..+....1....+....2....+....3....+....4....+....5....+....6....+....7..

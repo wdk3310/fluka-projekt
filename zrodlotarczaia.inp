@@ -1,0 +1,59 @@
+TITLE
+Projekt Zrodla - A: Sr-90 beta, oslona Al, tarcza PMMA
+DEFAULTS                                                              PRECISIO
+* Elektrony 546 keV (energia kinetyczna w GeV)
+BEAM       -0.000546             10000.0                              ELECTRON
+* Zrodlo powierzchniowe 10x10x0.01 cm w srodku ukladu (emisja izotropowa;
+* czastki lecace w -z gina w czarnej dziurze -> efektywnie polprzestrzen)
+BEAMPOS          0.0       0.0       0.0
+BEAMPOS         -5.0       5.0      -5.0       5.0    -0.005     0.005CART-VOL
+GEOBEGIN                                                              COMBNAME
+    0    0          Sr-90 geometry
+RPP blk_b      -60 60 -60 60 -60 60
+RPP air_b      -50 50 -50 50 -0.005 50
+RPP src_b      -5 5 -5 5 -0.005 0.005
+* oslona Al 0.5 mm (zmieniaj 5.0 5.05 na inne grubosci)
+RPP al_b       -15 15 -15 15 5.00 5.05
+* tarcza PMMA 2 cm
+RPP pmma_b     -15 15 -15 15 10.0 12.0
+END
+BLKBODY      5 +blk_b -air_b
+POWIETRZ     5 +air_b -src_b -al_b -pmma_b
+ZRODLO       5 +src_b
+OSLONA       5 +al_b
+TARCZA       5 +pmma_b
+END
+GEOEND
+* Materialy: PMMA (C5H8O2) i powietrze
+MATERIAL                            1.19                              PMMA
+COMPOUND         8.0  HYDROGEN       5.0    CARBON       2.0    OXYGENPMMA
+MATERIAL                      0.00120479                              AIR
+COMPOUND   -0.000124    CARBON -0.755268  NITROGEN -0.231781    OXYGENAIR
+COMPOUND   -0.012827     ARGON                                        AIR
+ASSIGNMA    BLCKHOLE   BLKBODY
+ASSIGNMA         AIR  POWIETRZ
+ASSIGNMA         AIR    ZRODLO
+* Wersja BEZ oslony: zamien ALUMINUM na AIR
+ASSIGNMA    ALUMINUM    OSLONA
+ASSIGNMA        PMMA    TARCZA
+* Progi transportu i produkcji: e+- 10 keV (kinetyczna), gamma 1 keV
+EMFCUT        -1E-05     1E-06            POWIETRZ    TARCZA
+EMFCUT        -1E-05     1E-06       1.0  ALUMINUM       AIR          PROD-CUT
+* Estymatory
+USRBIN          10.0      DOSE     -21.0      30.0       1.0      50.0DoseXZ
+USRBIN         -30.0      -1.0    -0.005     300.0       1.0     250.0 &
+USRBIN          10.0      DOSE     -22.0      15.0      15.0      12.0DosePMMA
+USRBIN         -15.0     -15.0      10.0      60.0      60.0      40.0 &
+USRBIN          10.0    ENERGY     -23.0      30.0       1.0      50.0EdepXZ
+USRBIN         -30.0      -1.0    -0.005     300.0       1.0     250.0 &
+USRBIN          10.0  BEAMPART     -24.0      30.0       1.0      50.0EdepBP
+USRBIN         -30.0      -1.0    -0.005     300.0       1.0     250.0 &
+USRBDX          -1.0  ELECTRON     -25.0  POWIETRZ    TARCZA     900.0eIntoPMM
+USRBDX        0.0006       0.0     100.0                           1.0 &
+USRBDX          -1.0    PHOTON     -25.0  POWIETRZ    TARCZA     900.0gIntoPMM
+USRBDX        0.0006       0.0     100.0                           1.0 &
+USRTRACK        -1.0  ELECTRON     -26.0    TARCZA    1800.0     100.0eFluPMMA
+USRTRACK      0.0006       0.0                                         &
+RANDOMIZ         1.0
+START      1000000.0
+STOP

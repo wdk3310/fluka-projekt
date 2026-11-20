@@ -1,61 +1,63 @@
 # flair project file
 Version: 300
 Mode: fluka
-md5: f1935578c601f80a045815894c8703a8
+md5: 8b43631e5678386c0dc83b2c0391caa6
 Input:
 TITLE
-*Set the defaults for precision simulations
+	Projekt Zrodla - A: Sr-90 beta, oslona Al, tarcza PMMA
 DEFAULTS PRECISIO
-*Define the beam characteristics
-BEAM ISOTOPE
-RADDECAY , 2
-HI-PROPE , 38 90 0.0
-*Define the beam position
-BEAMPOS , 0 0 0
-BEAMPOS CART-VOL 0 10 0 10 0 0.01
+* Elektrony 546 keV (energia kinetyczna w GeV)
+BEAM ELECTRON -0.000546,, 10000.0
+* Zrodlo powierzchniowe 10x10x0.01 cm w srodku ukladu (emisja izotropowa;
+* czastki lecace w -z gina w czarnej dziurze -> efektywnie polprzestrzen)
+BEAMPOS , 0.0 0.0 0.0
+BEAMPOS CART-VOL -5.0 5.0 -5.0 5.0 -0.005 0.005
 GEOBEGIN COMBNAME
-RPP blk_b -50 50 -50 50 -50 50
-RPP air_b -40 40 -40 40 -0.005 40
+	Sr-90 geometry
+RPP blk_b -60 60 -60 60 -60 60
+RPP air_b -50 50 -50 50 -0.005 50
 RPP src_b -5 5 -5 5 -0.005 0.005
-RPP al_b -5 5 -5 5 5.00 5.05
-RPP pmma_b -5 5 -5 5 5.05 6.05
+* oslona Al 0.5 mm (zmieniaj 5.0 5.05 na inne grubosci)
+RPP al_b -15 15 -15 15 5.00 5.05
+* tarcza PMMA 2 cm
+RPP pmma_b -15 15 -15 15 10.0 12.0
 END
-*Black hole
 REGION BLKBODY 5
 	+blk_b -air_b
-*Void around
-REGION VOID 5
+REGION POWIETRZ 5
 	+air_b -src_b -al_b -pmma_b
-*Void around
 REGION ZRODLO 5
-	+src_b 
-*Void around
+	+src_b
 REGION OSLONA 5
 	+al_b
-*Void around
-REGION VOID1 5
+REGION TARCZA 5
 	+pmma_b
-	@select=1
 END
 GEOEND
-*..+....1....+....2....+....3....+....4....+....5....+....6....+....7..
+* Materialy: PMMA (C5H8O2) i powietrze
+MATERIAL PMMA,,, 1.19
+COMPOUND PMMA 8.0 HYDROGEN 5.0 CARBON 2.0 OXYGEN
+MATERIAL AIR,,, 0.00120479
+COMPOUND AIR -0.000124 CARBON -0.755268 NITROGEN -0.231781 OXYGEN -0.012827 ARGON
 ASSIGNMA , BLCKHOLE BLKBODY
-ASSIGNMA , VACUUM VOID
-ASSIGNMA , COPPER TARGET
-*Requests simulation of radioactive decays and sets the corresponding
-*biasing and transport conditions
-RADDECAY , 1.
-*Define an irradiation profile for radioactive decay calculations
-IRRPROFI
-*Defines decay times for radioactive product scoring
-DCYTIMES
-*Associates selected scoring detectors with user-defined decay times
-DCYSCORE
-DCYSCORE , -1
-*Set the random number seed
+ASSIGNMA , AIR POWIETRZ
+ASSIGNMA , AIR ZRODLO
+* Wersja BEZ oslony: zamien ALUMINUM na AIR
+ASSIGNMA , ALUMINUM OSLONA
+ASSIGNMA , PMMA TARCZA
+* Progi transportu i produkcji: e+- 10 keV (kinetyczna), gamma 1 keV
+EMFCUT , -1E-05 1E-06,, POWIETRZ TARCZA
+EMFCUT PROD-CUT -1E-05 1E-06 1.0 ALUMINUM AIR
+* Estymatory
+USRBIN DoseXZ 10.0 DOSE -21.0 30.0 1.0 50.0 -30.0 -1.0 -0.005 300.0 1.0 250.0
+USRBIN DosePMMA 10.0 DOSE -22.0 15.0 15.0 12.0 -15.0 -15.0 10.0 60.0 60.0 40.0
+USRBIN EdepXZ 10.0 ENERGY -23.0 30.0 1.0 50.0 -30.0 -1.0 -0.005 300.0 1.0 250.0
+USRBIN EdepBP 10.0 BEAMPART -24.0 30.0 1.0 50.0 -30.0 -1.0 -0.005 300.0 1.0 250.0
+USRBDX eIntoPMM -1.0 ELECTRON -25.0 POWIETRZ TARCZA 900.0 0.0006 0.0 100.0,,, 1.0
+USRBDX gIntoPMM -1.0 PHOTON -25.0 POWIETRZ TARCZA 900.0 0.0006 0.0 100.0,,, 1.0
+USRTRACK eFluPMMA -1.0 ELECTRON -26.0 TARCZA 1800.0 100.0 0.0006 0.0
 RANDOMIZ , 1.0
-*Set the number of primary histories to be simulated in the run
-START
+START , 1000000.0
 STOP
 EndInput
 
@@ -63,6 +65,7 @@ Page: Input
 
 # Run information
 Run: <default>
+	open:     1
 End
 
 # Plots information
@@ -71,32 +74,33 @@ Plot: Red
 	basisu: 0 0 1
 	basisv: 1 0 0
 	coord: Z-X
-	extends: 0.08164534041559585 0.0918800839434768
+	extends: 0.09797440849871501 0.07348080637403626
 	group: Geometry
 	layer: Media
-	origin: -0.030247 0.0165958 1.36713
+	origin: -0.0224713 0.0165958 1.35337
 End
 Plot: Green
 	Type: Geometry
-	basisu: 0.816497 0.408248 0.408248
-	basisv: -1.42261e-16 0.707107 -0.707107
-	extends: 0.8735496675330089 0.9858631962158243
+	basisu: 0.408248 0.816497 -0.408248
+	basisv: -0.707107 -1.38778e-16 -0.707107
+	extends: 83.33333333333331 40.240423797881
 	group: Geometry
 	layer: 3D
-	origin: 0.379933 0.0149375 0.48667
+	origin: 5.11416 11.2639 -6.02804
 End
 Plot: Blue
 	Type: Geometry
 	coord: X-Y
-	extends: 13.458798574153814 15.14594141535828
+	extends: 11.215665478461512 8.411749108846134
 	group: Geometry
 	layer: Media
-	origin: -0.5496 2.49002 2.63866
+	origin: 1.23066 3.11996 2.63866
 End
 Plot: Magenta
 	Type: Geometry
 	coord: X-Y
-	extends: 100.0 112.85714285714286
+	extends: 429.98169599999994 207.63174806845961
 	group: Geometry
 	layer: Media
+	origin: 312.102 -102.396 0
 End

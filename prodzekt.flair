@@ -1,0 +1,52 @@
+# flair project file
+Version: 300
+Mode: fluka
+md5: 40a16d3ffd998a365d2fa85750a8cd4f
+Input:
+TITLE
+*Set the defaults for precision simulations
+DEFAULTS PRECISIO
+EMFCUT , -1E-05 1E-6,, BLKBODY BLKBODY
+EMFCUT PROD-CUT -1E-05 1E-6,, HYDROGEN
+*Define the beam characteristics
+BEAM
+*Define the beam position
+BEAMPOS
+GEOBEGIN COMBNAME
+*Black body
+SPH blkbody 0.0 0.0 0.0 100000.0
+*Void sphere
+SPH void 0.0 0.0 0.0 10000.0
+*Cylindrical target
+RCC target 0.0 0.0 0.0 0.0 0.0 10.0 5.0
+END
+*Black hole
+REGION BLKBODY 5
+	+blkbody -void
+*Void around
+REGION VOID 5
+	+void -target
+*Target
+REGION TARGET 5
+	+target
+END
+GEOEND
+*104 Air dry (near sea level)
+MATERIAL AIR,,, 0.00120484
+COMPOUND AIR -0.0001248 CARBON -0.755267 NITROGEN -0.231781 OXYGEN -0.012827 ARGON
+*..+....1....+....2....+....3....+....4....+....5....+....6....+....7..
+ASSIGNMA , BLCKHOLE BLKBODY
+ASSIGNMA , VACUUM VOID
+ASSIGNMA , COPPER TARGET
+*Set the random number seed
+RANDOMIZ , 1.0
+*Set the number of primary histories to be simulated in the run
+START
+STOP
+EndInput
+
+Page: Flair
+
+# Run information
+Run: <default>
+End

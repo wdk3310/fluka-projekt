@@ -1,7 +1,7 @@
 # flair project file
 Version: 300
 Mode: fluka
-md5: 0c011af75bd66097900dd921b0f566c3
+md5: f1935578c601f80a045815894c8703a8
 Input:
 TITLE
 *Set the defaults for precision simulations
@@ -13,20 +13,29 @@ HI-PROPE , 38 90 0.0
 *Define the beam position
 BEAMPOS , 0 0 0
 BEAMPOS CART-VOL 0 10 0 10 0 0.01
-GEOBEGIN COMBNAME,,, 5
-RPP , -50 50 -50 50 -50 50
-RPP , -40 40 -40 40 -0.005 40
-RPP , -5 5 -5 5 -0.005 0.005
-RPP , -5 5 -5 5 5.00 5.05
-RPP , -5 5 -5 5 5.05 6.05
-	@select=1
+GEOBEGIN COMBNAME
+RPP blk_b -50 50 -50 50 -50 50
+RPP air_b -40 40 -40 40 -0.005 40
+RPP src_b -5 5 -5 5 -0.005 0.005
+RPP al_b -5 5 -5 5 5.00 5.05
+RPP pmma_b -5 5 -5 5 5.05 6.05
 END
 *Black hole
 REGION BLKBODY 5
-	+blkbody -void
+	+blk_b -air_b
 *Void around
 REGION VOID 5
-	+void -target
+	+air_b -src_b -al_b -pmma_b
+*Void around
+REGION ZRODLO 5
+	+src_b 
+*Void around
+REGION OSLONA 5
+	+al_b
+*Void around
+REGION VOID1 5
+	+pmma_b
+	@select=1
 END
 GEOEND
 *..+....1....+....2....+....3....+....4....+....5....+....6....+....7..
@@ -78,11 +87,11 @@ Plot: Green
 End
 Plot: Blue
 	Type: Geometry
-	basisu: 0 0 1
-	coord: Z-Y
-	extends: 100.0 112.53561253561254
+	coord: X-Y
+	extends: 13.458798574153814 15.14594141535828
 	group: Geometry
 	layer: Media
+	origin: -0.5496 2.49002 2.63866
 End
 Plot: Magenta
 	Type: Geometry
